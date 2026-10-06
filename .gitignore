@@ -6,3 +6,9 @@ yolo11n.pt
 
 runs
 weights
+
+sahi_predictions.json
+
+eval.json
+
+sahi_outputs
