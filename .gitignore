@@ -3,8 +3,9 @@ datasets
 
 
 yolo11n.pt
+yolo11s.pt
 
-runs
+runs/detect
 weights
 
 sahi_predictions.json
@@ -12,3 +13,5 @@ sahi_predictions.json
 eval.json
 
 sahi_outputs
+
+error_analysis/error_analysis/results
