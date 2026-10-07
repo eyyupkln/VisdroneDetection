@@ -6,7 +6,7 @@ import os
 def main ():
 
     image_path = r"C:\Users\Monster\source\pycharmProject\VisdroneDetection\datasets\Visdrone\VisDrone2019-DET-val\images\0000001_02999_d_0000005.jpg"
-    model_path =r"C:\Users\Monster\source\pycharmProject\VisdroneDetection\runs\detect\train-5\weights\best.pt"
+    model_path =r"C:\Users\Monster\source\pycharmProject\VisdroneDetection\runs\detect\train-6\weights\best.pt"
 
     if not os.path.exists(image_path):
         print("hata: test fotoğrafı bulunamadı.")
@@ -24,8 +24,8 @@ def main ():
     result = get_sliced_prediction(
         image_path,
         detection_model,
-        slice_height=640,
-        slice_width=640,
+        slice_height=800,
+        slice_width=800,
         overlap_height_ratio=0.2,
         overlap_width_ratio=0.2,
         postprocess_type="NMS",

@@ -15,7 +15,7 @@ images_dir = (
 
 model_path = (
     r"C:\Users\Monster\source\pycharmProject"
-    r"\VisdroneDetection\runs\detect\train-5"
+    r"\VisdroneDetection\runs\detect\train-6"
     r"\weights\best.pt"
 )
 
@@ -42,8 +42,8 @@ for index, image_path in enumerate(image_paths, start=1):
         str(image_path),
         detection_model,
 
-        slice_height=640,
-        slice_width=640,
+        slice_height=800,
+        slice_width=800,
 
         overlap_height_ratio=0.2,
         overlap_width_ratio=0.2,
