@@ -21,7 +21,7 @@ def main():
     detection_model = AutoDetectionModel.from_pretrained(
         model_type='yolov11',
         model_path=model_path,
-        confidence_threshold=0.45,  # Takipte gürültü istemeyiz, eşiği yüksek tut
+        confidence_threshold=0.25,  # Daha yuksek recall icin dusurduk (optimizasyon sonucu)
         device="cuda:0"
     )
 
@@ -30,11 +30,11 @@ def main():
     from types import SimpleNamespace
     tracker_args = SimpleNamespace(
         tracker_type='botsort',
-        track_high_thresh=0.5,
+        track_high_thresh=0.3,
         track_low_thresh=0.1,
-        new_track_thresh=0.6,
-        track_buffer=30,
-        match_thresh=0.8,
+        new_track_thresh=0.4,
+        track_buffer=60,
+        match_thresh=0.9,
         gmc_method='sparseOptFlow',
         proximity_thresh=0.5,
         appearance_thresh=0.25,
@@ -74,10 +74,10 @@ def main():
         result = get_sliced_prediction(
             frame,
             detection_model,
-            slice_height=1024,
-            slice_width=1024,
-            overlap_height_ratio=0.1,
-            overlap_width_ratio=0.1
+            slice_height=640,
+            slice_width=640,
+            overlap_height_ratio=0.2,
+            overlap_width_ratio=0.2
         )
 
         # 5. KÖPRÜ: Tensor'u 'Boxes' Objesine Sarma (CPU Versiyonu)
