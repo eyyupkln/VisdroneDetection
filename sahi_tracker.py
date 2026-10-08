@@ -5,6 +5,8 @@ from sahi import AutoDetectionModel
 from sahi.predict import get_sliced_prediction
 # Ultralytics'in yerleşik Tracker (BoT-SORT / ByteTrack) sistemini içe aktarıyoruz
 from ultralytics.trackers import BOTSORT
+from ultralytics.engine.results import Boxes
+
 
 
 def main():
@@ -47,13 +49,6 @@ def main():
     tracker = BOTSORT(args=tracker_args)
 
     print("Video işleniyor...")
-    # ... (4. Adım ve while döngüsünün devamı tamamen aynı)
-    # ... (Kodun geri kalanı yani while döngüsü tamamen aynı)
-
-    # KODUN EN ÜSTÜNE EKLENECEK İMPORT:
-    from ultralytics.engine.results import Boxes
-
-    # ... (1, 2 ve 3. Adımlar aynı kalacak) ...
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -94,7 +89,6 @@ def main():
         yolo_boxes = Boxes(det_tensor, frame.shape[:2])
 
         # 6. Tracker'ı Güncelle
-        # Artık yolo_boxes gönderiyoruz, det_tensor değil.
         tracked_objects = tracker.update(yolo_boxes, frame)
 
         # 7. Sonuçları Görüntünün Üzerine Çiz
