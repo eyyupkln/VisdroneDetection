@@ -1,4 +1,5 @@
 import cv2
+import time
 import torch
 import numpy as np
 from sahi import AutoDetectionModel
@@ -48,13 +49,22 @@ def main():
     # Tracker'ı sadece args objesiyle başlatıyoruz
     tracker = BOTSORT(args=tracker_args)
 
-    print("Video işleniyor...")
+    # Metrik değişkenleri
+    frame_idx        = 0
+    fps_history      = []
+    total_det_count  = 0
+    max_simultaneous = 0
+    unique_track_ids = set()
+
+    print("Video isleniyor...")
 
     while cap.isOpened():
+        t_start = time.perf_counter()
         ret, frame = cap.read()
         if not ret:
             print("Video bitti.")
             break
+        frame_idx += 1
 
         # PERFORMANS İÇİN: 4K (3840x2160) görüntüyü 1080p'ye (1920x1080) düşürüyoruz.
         # Bu sayede SAHI çok daha az parça çıkaracak ve inanılmaz derecede hızlanacak.
@@ -91,12 +101,23 @@ def main():
         # 6. Tracker'ı Güncelle
         tracked_objects = tracker.update(yolo_boxes, frame)
 
+        # Metrik güncelle
+        n_dets = len(detections)
+        n_tracks = len(tracked_objects)
+        total_det_count += n_dets
+        max_simultaneous = max(max_simultaneous, n_tracks)
+
+        # FPS
+        fps = 1.0 / (time.perf_counter() - t_start + 1e-9)
+        fps_history.append(fps)
+
         # 7. Sonuçları Görüntünün Üzerine Çiz
         for track in tracked_objects:
             x1, y1, x2, y2 = track[0], track[1], track[2], track[3]
             track_id = int(track[4])
             conf = track[5]
             cls = int(track[6])
+            unique_track_ids.add(track_id)
 
             # Nesneyi çerçevele
             cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
@@ -104,6 +125,17 @@ def main():
             # ID Numarasını ve Sınıfı Yaz
             label = f"ID: {track_id} | Cls: {cls}"
             cv2.putText(frame, label, (int(x1), int(y1) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+        # FPS + istatistik HUD
+        avg_fps_so_far = float(np.mean(fps_history))
+        hud = [
+            f"FPS: {fps:.1f}  (ort: {avg_fps_so_far:.1f})",
+            f"Frame: {frame_idx}  Tracks: {n_tracks}  Dets: {n_dets}",
+            f"Toplam track: {len(unique_track_ids)}",
+        ]
+        for i, line in enumerate(hud):
+            cv2.putText(frame, line, (10, 25 + i * 22),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.65, (0, 255, 180), 2)
 
         # Ekranda Göster
         display_frame = cv2.resize(frame, (1280, 720))
@@ -114,6 +146,27 @@ def main():
 
     cap.release()
     cv2.destroyAllWindows()
+
+    # ── SAYISAL ÖZET ─────────────────────────────────────────────
+    if fps_history:
+        avg_fps = float(np.mean(fps_history))
+        min_fps = float(np.min(fps_history))
+        max_fps = float(np.max(fps_history))
+        avg_dets = total_det_count / max(frame_idx, 1)
+        print()
+        print("=" * 50)
+        print("  TRACKING SAYISAL SONUCLARI")
+        print("=" * 50)
+        print(f"  Islenen Kare         : {frame_idx}")
+        print(f"  Ort. FPS             : {avg_fps:.2f}")
+        print(f"  Min FPS              : {min_fps:.2f}")
+        print(f"  Max FPS              : {max_fps:.2f}")
+        print(f"  Ort. Gecikme (ms)    : {1000/avg_fps:.1f}")
+        print(f"  Toplam Tespit        : {total_det_count}")
+        print(f"  Ort. Tespit/Kare     : {avg_dets:.1f}")
+        print(f"  Benzersiz Track ID   : {len(unique_track_ids)}")
+        print(f"  Max Ayni Anda Track  : {max_simultaneous}")
+        print("=" * 50)
 
 
 if __name__ == "__main__":
