@@ -68,13 +68,18 @@ def choose_model():
     pt   = Path(PT_PATH)
 
     if onnx.exists():
-        # ONNX Runtime'in hangi Execution Provider'lari destekledigini kontrol et
+        import os
+        # [HACK] ONNX Runtime'in GPU DLL'lerini (cuDNN, cuBLAS) bulabilmesi icin
+        # PyTorch'un icindeki gizli lib klasorunu gecici olarak sistem PATH'ine ekliyoruz.
+        torch_lib = os.path.join(os.path.dirname(torch.__file__), 'lib')
+        os.environ['PATH'] = torch_lib + ';' + os.environ.get('PATH', '')
+
         import onnxruntime as ort
         providers = ort.get_available_providers()
         if "TensorrtExecutionProvider" in providers:
             print("[INFO] ONNX + TensorRT EP: En yuksek hiz modu aktif!")
         elif "CUDAExecutionProvider" in providers:
-            print("[INFO] ONNX + CUDA EP: GPU hizlandirmali cikarsim")
+            print("[INFO] ONNX + CUDA EP: GPU hizlandirmali cikarsim (cuDNN hack ile)")
         else:
             print("[INFO] ONNX + CPU EP: (GPU EP bulunamadi)")
         print(f"[INFO] Model: {onnx}")
@@ -180,13 +185,18 @@ def main():
     model_path, model_type = choose_model()
     is_onnx = model_path.endswith(".onnx")
 
-    print("\n[INFO] SAHI detection modeli yukleniyor...")
+    print("\n[INFO] SAHI detection modeli yukleniyor (FP16)...")
     detection_model = AutoDetectionModel.from_pretrained(
         model_type=model_type,
         model_path=model_path,
         confidence_threshold=CONF_THRESH,
         device=DEVICE,
+        load_at_init=True,
     )
+    # FP16 (half precision) optimizasyonu yalnizca PyTorch (.pt) modellerinde gecerlidir
+    if model_path.endswith('.pt') and hasattr(detection_model, 'model') and hasattr(detection_model.model, 'half'):
+        detection_model.model.half()
+        print("[INFO] PyTorch Modeli FP16 (half precision) moduna alindi")
 
     # 2. Tracker olustur (ReID dahil)
     print()
