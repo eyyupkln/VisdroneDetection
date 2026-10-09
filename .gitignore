@@ -1,18 +1,47 @@
-datasets
-.venv
+# Python & IDE
+__pycache__/
+*.py[cod]
+*$py.class
+.idea/
+.vscode/
+.venv/
+venv/
+env/
+.env
 
+# Datasets and Outputs
+datasets/
+sahi_outputs/
+error_analysis/
+*.mp4
+*.avi
+*.jpg
+*.jpeg
+*.png
 
-yolo11n.pt
-yolo11s.pt
+# Large Data & Predictions
+*.json
 
-runs/detect
-weights
+# Model Weights and Exports
+weights/
+*.pt
+*.onnx
+*.engine
+*.trt
 
-sahi_predictions.json
+# Exceptions (Files that MUST be pushed)
+# 1. The main trained YOLO11s model
+!runs/detect/train-6/weights/best.pt
 
-eval.json
+# 2. The ReID model for tracking
+!yolo26n-reid.onnx
 
-sahi_outputs
-
-error_analysis/error_analysis/results
-tracker_eval_results.json
+# Ignore all other runs logs and weights
+runs/*
+!runs/detect/
+runs/detect/*
+!runs/detect/train-6/
+runs/detect/train-6/*
+!runs/detect/train-6/weights/
+runs/detect/train-6/weights/*
+!runs/detect/train-6/weights/best.pt
