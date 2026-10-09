@@ -21,6 +21,8 @@ error_analysis/
 
 # Large Data & Predictions
 *.json
+!eval.json
+!tracker_eval_results.json
 
 # Model Weights and Exports
 weights/

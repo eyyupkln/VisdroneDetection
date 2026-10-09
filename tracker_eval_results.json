@@ -1,0 +1,99 @@
+{
+    "iou_thresh": 0.5,
+    "per_class": {
+        "pedestrian": {
+            "tp": 970,
+            "fp": 404,
+            "fn": 7874,
+            "precision": 0.706,
+            "recall": 0.1097,
+            "f1": 0.1899
+        },
+        "people": {
+            "tp": 294,
+            "fp": 117,
+            "fn": 4831,
+            "precision": 0.7153,
+            "recall": 0.0574,
+            "f1": 0.1062
+        },
+        "bicycle": {
+            "tp": 74,
+            "fp": 63,
+            "fn": 1213,
+            "precision": 0.5401,
+            "recall": 0.0575,
+            "f1": 0.1039
+        },
+        "car": {
+            "tp": 3688,
+            "fp": 457,
+            "fn": 10376,
+            "precision": 0.8897,
+            "recall": 0.2622,
+            "f1": 0.4051
+        },
+        "van": {
+            "tp": 374,
+            "fp": 393,
+            "fn": 1601,
+            "precision": 0.4876,
+            "recall": 0.1894,
+            "f1": 0.2728
+        },
+        "truck": {
+            "tp": 115,
+            "fp": 313,
+            "fn": 635,
+            "precision": 0.2687,
+            "recall": 0.1533,
+            "f1": 0.1952
+        },
+        "tricycle": {
+            "tp": 99,
+            "fp": 99,
+            "fn": 946,
+            "precision": 0.5,
+            "recall": 0.0947,
+            "f1": 0.1593
+        },
+        "awning-tricycle": {
+            "tp": 16,
+            "fp": 30,
+            "fn": 516,
+            "precision": 0.3478,
+            "recall": 0.0301,
+            "f1": 0.0554
+        },
+        "bus": {
+            "tp": 60,
+            "fp": 19,
+            "fn": 191,
+            "precision": 0.7595,
+            "recall": 0.239,
+            "f1": 0.3636
+        },
+        "motor": {
+            "tp": 484,
+            "fp": 210,
+            "fn": 4402,
+            "precision": 0.6974,
+            "recall": 0.0991,
+            "f1": 0.1735
+        }
+    },
+    "overall": {
+        "micro": {
+            "precision": 0.7457,
+            "recall": 0.1593,
+            "f1": 0.2625
+        },
+        "macro": {
+            "precision": 0.5912,
+            "recall": 0.1292,
+            "f1": 0.2025
+        },
+        "total_frames": 548,
+        "elapsed_sec": 102.4
+    }
+}
