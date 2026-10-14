@@ -19,6 +19,7 @@ An experiment in small-object detection and multi-object tracking (MOT) on aeria
 | `tracking_speed_test.py` | **High speed mode:** Plain YOLO + ByteTrack speed test, no SAHI. |
 | `runs/detect/train-6/weights/best.pt` | YOLO11s weights fine-tuned on VisDrone DET. |
 | `yolo26n-reid.onnx` | ReID (appearance) model for BoT-SORT. |
+| `requirements.txt` | Python package dependencies for detection, tracking, and evaluation. |
 | `tools/`, `error_analysis/` | Helper scripts, evaluation tools, and error-analysis outputs. |
 
 ## ⚙️ How It Works
@@ -72,16 +73,35 @@ graph TD;
 
 ## 🚀 Setup & Usage
 
-```bash
-pip install ultralytics sahi opencv-python numpy torch onnxruntime-gpu
-```
-In both scripts, change `VIDEO_PATH` (or `video_path`) at the top of the file to your own video. No video is included in the repo.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/eyyupkln/VisdroneDetection.git
+   cd VisdroneDetection
+   ```
 
-**Run the scripts:**
-```bash
-python sahi_tracker.py         # SAHI + BoT-SORT 
-python tracking_speed_test.py  # Speed test
-```
+2. **(Recommended) Create and activate a virtual environment:**
+   ```bash
+   python -m venv .venv
+   # Windows:
+   .venv\Scripts\activate
+   # Linux/macOS:
+   source .venv/bin/activate
+   ```
+
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+   *Note for GPU users:* For CUDA-accelerated PyTorch, install the appropriate CUDA wheel for your system if needed (e.g., `pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124`).
+
+4. **Configure video source:**
+   In both scripts, change `VIDEO_PATH` (or `video_path`) at the top of the file to your own video. No video is included in the repo.
+
+5. **Run the scripts:**
+   ```bash
+   python sahi_tracker.py         # SAHI + BoT-SORT (High accuracy mode)
+   python tracking_speed_test.py  # Speed test (High speed mode)
+   ```
 
 *(Optional)* `sahi_tracker.py` first looks for `runs/detect/train-6/weights/best.engine` or `.onnx` and falls back to `best.pt`. To create an optimized engine:
 ```python
@@ -94,7 +114,6 @@ YOLO('runs/detect/train-6/weights/best.pt').export(format='engine', half=True, d
 * On frames without detection, previous detections are re-fed to the tracker; this is not a pure Kalman prediction and may cause lag or jitter on fast-moving objects.
 * SAHI runs on a frame downscaled to 1280×720, not on the full 4K frame, so the benefit for small objects may be smaller than with full resolution.
 * Scripts contain an absolute Windows video path, and the `PATH` tweak for ONNX Runtime only works on Windows.
-* There is no `requirements.txt`; package versions are not pinned.
 * The on-screen "ONNX+TRT" label is derived from the file extension and does not guarantee TensorRT is actually used.
 
 ## 📚 Dataset
@@ -120,6 +139,7 @@ Drone (havadan) görüntülerinde küçük nesne tespiti ve çoklu nesne takibi 
 | `tracking_speed_test.py` | **Yüksek hız modu:** SAHI olmadan, YOLO + ByteTrack hız testi. |
 | `runs/detect/train-6/weights/best.pt` | VisDrone DET üzerinde eğitilmiş YOLO11s ağırlıkları. |
 | `yolo26n-reid.onnx` | BoT-SORT için ReID (görünüm) modeli. |
+| `requirements.txt` | Tespit, takip ve değerlendirme için gerekli Python paket bağımlılıkları. |
 | `tools/`, `error_analysis/` | Yardımcı araçlar ve hata analizi çıktıları. |
 
 ## ⚙️ Nasıl Çalışır?
@@ -173,16 +193,35 @@ graph TD;
 
 ## 🚀 Kurulum ve Çalıştırma
 
-```bash
-pip install ultralytics sahi opencv-python numpy torch onnxruntime-gpu
-```
-Her iki betikte de dosyanın başındaki `VIDEO_PATH` değişkenini kendi videonuzun yoluyla değiştirin. Video depoda bulunmaz.
+1. **Depoyu klonlayın:**
+   ```bash
+   git clone https://github.com/eyyupkln/VisdroneDetection.git
+   cd VisdroneDetection
+   ```
 
-**Çalıştırın:**
-```bash
-python sahi_tracker.py         # SAHI + BoT-SORT 
-python tracking_speed_test.py  # Hız testi
-```
+2. **(Önerilen) Sanal ortam oluşturun ve aktifleştirin:**
+   ```bash
+   python -m venv .venv
+   # Windows:
+   .venv\Scripts\activate
+   # Linux/macOS:
+   source .venv/bin/activate
+   ```
+
+3. **Gereksinimleri yükleyin:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+   *GPU kullanıcıları için not:* CUDA hızlandırmalı PyTorch için sisteminize uygun tekeri kurun (örn. `pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124`).
+
+4. **Video yolunu ayarlayın:**
+   Her iki betikte de (`sahi_tracker.py` ve `tracking_speed_test.py`) dosyanın başındaki `VIDEO_PATH` (veya `video_path`) değişkenini kendi videonuzun yoluyla değiştirin. Video depoya dahil değildir.
+
+5. **Çalıştırın:**
+   ```bash
+   python sahi_tracker.py         # SAHI + BoT-SORT (Yüksek doğruluk modu)
+   python tracking_speed_test.py  # Hız testi (Yüksek hız modu)
+   ```
 
 *(İsteğe bağlı)* `sahi_tracker.py` önce `runs/detect/train-6/weights/best.engine` veya `.onnx` dosyasını arar, bulamazsa `best.pt`'ye geçer. Optimize edilmiş motor (.engine) üretmek için:
 ```python
@@ -195,7 +234,6 @@ YOLO('runs/detect/train-6/weights/best.pt').export(format='engine', half=True, d
 * Tespit yapılmayan karelerde tracker'a önceki tespitler tekrar verilir; bu saf bir Kalman tahmini değildir ve hızlı hareket eden nesnelerde kutularda gecikme veya titreme olabilir.
 * SAHI, 4K kare yerine 1280×720'ye küçültülmüş kare üzerinde çalışır; küçük nesneler için tam çözünürlük kadar kazanç sağlamayabilir.
 * Betiklerde mutlak (Windows) video yolu vardır ve ONNX Runtime için `PATH` ayarı (DLL hack'i) yalnızca Windows'ta çalışır.
-* `requirements.txt` yoktur; paket sürümleri sabitlenmemiştir.
 * Ekrandaki "ONNX+TRT" etiketi dosya uzantısına göre yazılır; TensorRT'nin gerçekten kullanıldığını garanti etmez.
 
 ## 📚 Kullanılan Veri Seti
